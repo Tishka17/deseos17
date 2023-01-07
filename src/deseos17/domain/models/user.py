@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from .user_id import UserID
+from .user_id import UserId
 
 
 @dataclass
 class User:
-    user_id: UserID
+    user_id: UserId

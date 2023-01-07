@@ -1,3 +1,3 @@
 from typing import NewType
 
-UserID = NewType("UserId", int)
+UserId = NewType("UserId", int)

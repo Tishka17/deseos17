@@ -1,12 +1,12 @@
 from typing import List
 
 from ..models.sharing import ShareRule
-from ..models.user_id import UserID
+from ..models.user_id import UserId
 from ..models.wish import Wish
 
 
 def user_can_edit(
-        wish: Wish, user_id: UserID, share_rules: List[ShareRule],
+        wish: Wish, user_id: UserId, share_rules: List[ShareRule],
 ) -> bool:
     if wish.owner_id == user_id:
         return True
