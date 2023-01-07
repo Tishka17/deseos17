@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[project]
+name = "deseos17"
+version = "0.0.1"
+authors = [
+    { name = "Andrey Tikhonov", email = "17@itishka.org" },
+]
+description = "Wishlist with clean architecture"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+[project.optional-dependencies]
+test = [
+    "pytest"
+]
+lint = [
+    "flake8"
+]
+
+
+[project.urls]
+"Homepage" = "https://github.com/tishka17/deseos17"
+"Bug Tracker" = "https://github.com/tishka17/deseos17/issues"
