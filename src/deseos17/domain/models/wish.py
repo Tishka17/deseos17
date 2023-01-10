@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import NewType
+from typing import NewType, Optional
 
 from .user import UserId
 
@@ -10,15 +10,15 @@ WishListId = NewType("WishListId", int)
 
 @dataclass
 class WishList:
-    id: WishListId
+    id: Optional[WishListId]
+    owner_id: UserId
     name: str
     updated_at: datetime
 
 
 @dataclass
 class Wish:
-    id: WishId
+    id: Optional[WishId]
     text: str
     updated_at: datetime
     wishlist_id: WishListId
-    owner_id: UserId

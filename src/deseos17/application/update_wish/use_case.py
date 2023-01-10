@@ -18,7 +18,7 @@ class UpdateWish(UseCase[UpdateWishDTO, None]):
             wishlist.id, data.user_id,
         )
 
-        if not user_can_edit(wish, data.user_id, share_rules):
+        if not user_can_edit(wishlist, data.user_id, share_rules):
             raise AccessDenied
 
         update_wish(wish, wishlist, new_text=data.text)
