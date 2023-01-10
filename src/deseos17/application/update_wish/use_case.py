@@ -22,6 +22,7 @@ class UpdateWish(UseCase[UpdateWishDTO, None]):
             raise AccessDenied
 
         update_wish(wish, wishlist, new_text=data.text)
+
         self.db_gateway.save_wish(wish)
         self.db_gateway.save_wishlist(wishlist)
         self.db_gateway.commit()

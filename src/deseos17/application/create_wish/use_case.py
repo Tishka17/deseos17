@@ -21,9 +21,8 @@ class CreateWish(UseCase[NewWishDTO, WishId]):
         if not user_can_create(wishlist, data.user_id, share_rules):
             raise AccessDenied
 
-        wish = create_wish(
-            owner_id=data.user_id, wishlist=wishlist, text=data.text,
-        )
+        wish = create_wish(wishlist=wishlist, text=data.text)
+
         self.db_gateway.save_wish(wish)
         self.db_gateway.save_wishlist(wishlist)
         self.db_gateway.commit()

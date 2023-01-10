@@ -12,7 +12,7 @@ WishListId = NewType("WishListId", int)
 class WishList:
     id: Optional[WishListId]
     owner_id: UserId
-    name: str
+    title: str
     updated_at: datetime
 
 
