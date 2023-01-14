@@ -5,8 +5,8 @@ Application for wish list management with telegram bot and web ui
 
 ### Models
 
-Blue models are to be implemented now
-Gray models are planned and need to be clarified
+* _Blue_ models are to be implemented now.
+* _Gray_ models are planned and need to be clarified
 
 ```mermaid
 flowchart LR
@@ -73,5 +73,7 @@ flowchart LR
     ViewRecent --> UpdateWish
     User --> CreateWishList --> ViewOwnWishList
     User --> ViewAllShared --> ViewSharedWishList
+    
+    
     
 ```
