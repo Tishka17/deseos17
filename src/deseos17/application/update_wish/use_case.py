@@ -1,15 +1,22 @@
 from deseos17.application.common.exceptions import AccessDenied
 from deseos17.application.common.use_case import UseCase
 from deseos17.domain.models.wish import Wish, WishList
-from deseos17.domain.services.access import user_can_edit
-from deseos17.domain.services.wish import update_wish
+from deseos17.domain.services.access import AccessService
+from deseos17.domain.services.wish import WishService
 from .dto import UpdateWishDTO
 from .interfaces import DbGateway
 
 
 class UpdateWish(UseCase[UpdateWishDTO, None]):
-    def __init__(self, db_gateway: DbGateway):
+    def __init__(
+            self,
+            db_gateway: DbGateway,
+            access_service: AccessService,
+            wish_service: WishService,
+    ):
         self.db_gateway = db_gateway
+        self.access_service = access_service
+        self.wish_service = wish_service
 
     def __call__(self, data: UpdateWishDTO) -> None:
         wish: Wish = self.db_gateway.get_wish(data.id)
@@ -18,10 +25,12 @@ class UpdateWish(UseCase[UpdateWishDTO, None]):
             wishlist.id, data.user_id,
         )
 
-        if not user_can_edit(wishlist, data.user_id, share_rules):
+        if not self.access_service.user_can_edit(
+                wishlist, data.user_id, share_rules
+        ):
             raise AccessDenied
 
-        update_wish(wish, wishlist, new_text=data.text)
+        self.wish_service.update_wish(wish, wishlist, new_text=data.text)
 
         self.db_gateway.save_wish(wish)
         self.db_gateway.save_wishlist(wishlist)
