@@ -18,6 +18,17 @@ class AccessService:
                 return
         raise AccessDenied()
 
+    def ensure_can_view(
+            self, wishlist: WishList, user_id: UserId,
+            share_rules: List[ShareRule],
+    ) -> None:
+        if wishlist.owner_id == user_id:
+            return
+        for share_rule in share_rules:
+            if share_rule.user_id == user_id and share_rule.read_allowed:
+                return
+        raise AccessDenied()
+
     def ensure_can_create(
             self, wishlist: WishList, user_id: UserId,
             share_rules: List[ShareRule],
