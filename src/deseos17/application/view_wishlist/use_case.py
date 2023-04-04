@@ -6,7 +6,7 @@ from .dto import ViewWishListDTO
 from .interfaces import DbGateway
 
 
-class UpdateWish(UseCase[ViewWishListDTO, WishList]):
+class ViewWishList(UseCase[ViewWishListDTO, WishList]):
     def __init__(
             self,
             db_gateway: DbGateway,

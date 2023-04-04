@@ -38,3 +38,4 @@
      * web api (REST-like). It is going to be implemented using FastApi.
      * Telegram bot. It will use aiogram-dialogs
    * adapters. We will put here data access objects and clients for external APIs
+2. Created simple telegram dialog to test how DI can be implemented

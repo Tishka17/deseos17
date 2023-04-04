@@ -18,7 +18,9 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
-dependencies = []
+dependencies = [
+    "aiogram-dialog>=2.0.0b17"
+]
 [project.optional-dependencies]
 test = [
     "pytest"
