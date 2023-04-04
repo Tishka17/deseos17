@@ -73,7 +73,4 @@ flowchart LR
     ViewRecent --> UpdateWish
     User --> CreateWishList --> ViewOwnWishList
     User --> ViewAllShared --> ViewSharedWishList
-    
-    
-    
 ```
