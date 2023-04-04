@@ -1,4 +1,3 @@
-from deseos17.application.common.exceptions import AccessDenied
 from deseos17.application.common.use_case import UseCase
 from deseos17.domain.models.wish import WishList, WishId
 from deseos17.domain.services.access import AccessService
@@ -25,10 +24,9 @@ class CreateWish(UseCase[NewWishDTO, WishId]):
             wishlist.id, data.user_id,
         )
 
-        if not self.access_service.user_can_create(
-                wishlist, data.user_id, share_rules,
-        ):
-            raise AccessDenied
+        self.access_service.ensure_can_create(
+            wishlist, data.user_id, share_rules,
+        )
 
         wish = self.wish_service.create_wish(wishlist=wishlist, text=data.text)
 

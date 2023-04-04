@@ -1,4 +1,3 @@
-from deseos17.application.common.exceptions import AccessDenied
 from deseos17.application.common.use_case import UseCase
 from deseos17.domain.models.wish import Wish, WishList
 from deseos17.domain.services.access import AccessService
@@ -25,10 +24,9 @@ class UpdateWish(UseCase[UpdateWishDTO, None]):
             wishlist.id, data.user_id,
         )
 
-        if not self.access_service.user_can_edit(
-                wishlist, data.user_id, share_rules
-        ):
-            raise AccessDenied
+        self.access_service.ensure_can_edit(
+            wishlist, data.user_id, share_rules
+        )
 
         self.wish_service.update_wish(wish, wishlist, new_text=data.text)
 

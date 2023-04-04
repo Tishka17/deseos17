@@ -25,3 +25,7 @@
 1. Domain services implemented as classes injected in use cases. That allows to
    exclude them from use case testing
 2. Domain services are not split too much to simplify current implementation
+
+### pre05.domain_errors (2023.04.05)
+
+1. Access related exceptions moved to domain layer. So no need to do same raises in all use cases
