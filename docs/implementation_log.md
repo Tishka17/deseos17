@@ -29,3 +29,12 @@
 ### [pre05.domain_errors](../../../tree/pre05.domain_errors) (2023.04.05)
 
 1. Access related exceptions moved to domain layer. So no need to do same raises in all use cases
+
+### ...
+
+1. Created layout for interface layer. It is split into 2 packages:
+   * presentation (primary adapters in hexagonal architecture) here will be all related to application entrypoints: controllers and presenters.
+     Actually we have two ways of interacting with our application:
+     * web api (REST-like). It is going to be implemented using FastApi.
+     * Telegram bot. It will use aiogram-dialogs
+   * adapters. We will put here data access objects and clients for external APIs
