@@ -18,15 +18,14 @@ from .. import states
 TEXT_INPUT_ID = "text"
 
 
-class NewWishBaseWindow(Window):
+class NewWishController:
     def __init__(
             self,
-            *args,
             view_wishlist_factory: UseCaseFactory[ViewWishList],
-            **kwargs,
+            new_wish_factory: UseCaseFactory[CreateWish],
     ):
-        super().__init__(*args, **kwargs)
         self.view_wishlist_factory = view_wishlist_factory
+        self.new_wish_factory = new_wish_factory
 
     def get_wishlist_id(self, dialog_manager) -> WishListId:
         return dialog_manager.start_data["wishlist_id"]
@@ -39,47 +38,6 @@ class NewWishBaseWindow(Window):
         return {
             "wishlist": wishlist,
         }
-
-
-class InputTextWindow(NewWishBaseWindow):
-    def __init__(
-            self,
-            view_wishlist_factory: UseCaseFactory[ViewWishList],
-    ):
-        super().__init__(
-            Format(
-                "You are going to add wish into list `{wishlist.name}`.\n"
-                "Please, provide text:"
-            ),
-            TextInput(id=TEXT_INPUT_ID, on_success=Next()),
-            view_wishlist_factory=view_wishlist_factory,
-            getter=self.wishlist_getter,
-            state=states.NewWish.text,
-        )
-
-
-class InputDoneWindow(NewWishBaseWindow):
-    def __init__(
-            self,
-            view_wishlist_factory: UseCaseFactory[ViewWishList],
-            new_wish_factory: UseCaseFactory[CreateWish],
-    ):
-        self.new_wish_factory = new_wish_factory
-        super().__init__(
-            Format(
-                "You are going to add wish into list `{wishlist.name}`.\n"
-                "Your text is: \n{text}\n\n"
-                "Please, confirm."
-            ),
-            Row(
-                Button(text=Const("Ok"), id="ok", on_click=self.on_done),
-                Back(),
-                Cancel()
-            ),
-            getter=[self.wishlist_getter, self.preview_getter],
-            state=states.NewWish.preview,
-            view_wishlist_factory=view_wishlist_factory,
-        )
 
     def preview_getter(
             self, dialog_manager: DialogManager, **kwargs,
@@ -101,13 +59,43 @@ class InputDoneWindow(NewWishBaseWindow):
         ))
 
 
-class NewWishDialog(Dialog):
-    def __init__(
-            self,
-            view_wishlist_factory: UseCaseFactory[ViewWishList],
-            new_wish_factory: UseCaseFactory[CreateWish],
-    ):
-        super().__init__(
-            InputTextWindow(view_wishlist_factory),
-            InputDoneWindow(view_wishlist_factory, new_wish_factory),
-        )
+def input_text_window(controller: NewWishController) -> Window:
+    return Window(
+        Format(
+            "You are going to add wish into list `{wishlist.name}`.\n"
+            "Please, provide text:"
+        ),
+        TextInput(id=TEXT_INPUT_ID, on_success=Next()),
+        getter=controller.wishlist_getter,
+        state=states.NewWish.text,
+    )
+
+
+def done_window(controller: NewWishController) -> Window:
+    return Window(
+        Format(
+            "You are going to add wish into list `{wishlist.name}`.\n"
+            "Your text is: \n{text}\n\n"
+            "Please, confirm."
+        ),
+        Row(
+            Button(text=Const("Ok"), id="ok", on_click=controller.on_done),
+            Back(),
+            Cancel()
+        ),
+        getter=[controller.wishlist_getter, controller.preview_getter],
+        state=states.NewWish.preview,
+    )
+
+
+def new_wish_dialog(
+        view_wishlist_factory: UseCaseFactory[ViewWishList],
+        new_wish_factory: UseCaseFactory[CreateWish],
+):
+    controller = NewWishController(
+        view_wishlist_factory, new_wish_factory,
+    )
+    return Dialog(
+        input_text_window(controller),
+        done_window(controller),
+    )
