@@ -91,7 +91,7 @@ def done_window(controller: NewWishController) -> Window:
 def new_wish_dialog(
         view_wishlist_factory: UseCaseFactory[ViewWishList],
         new_wish_factory: UseCaseFactory[CreateWish],
-):
+) -> Dialog:
     controller = NewWishController(
         view_wishlist_factory, new_wish_factory,
     )

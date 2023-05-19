@@ -6,7 +6,7 @@ from deseos17.application.common.interfaces import (
 
 
 class DbGateway(
-    Protocol, WishListReader,
-    ShareReader,
+    WishListReader,
+    ShareReader, Protocol,
 ):
     pass

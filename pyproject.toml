@@ -19,7 +19,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "aiogram-dialog>=2.0.0b17"
+    "aiogram-dialog>=2.0.0b18",
 ]
 [project.optional-dependencies]
 test = [

@@ -39,3 +39,7 @@
      * Telegram bot. It will use aiogram-dialogs
    * adapters. We will put here data access objects and clients for external APIs
 2. Created simple telegram dialog to test how DI can be implemented
+    * Use cases created inside controllers by calling provided factories
+    * Factories are injected during registration process
+    * Open question when to release resources. It can be done converting factories  context manager or inside middleware
+3. Stub db gateway and runnable main added
