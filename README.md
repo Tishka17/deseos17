@@ -5,3 +5,23 @@ This project is a demo implementation of "Clean architecture" in Python.
 * [Domain specification](docs/domain.md)
 * [Implementation details](/docs/implementation.md)
 * [Implementation log](/docs/implementation_log.md)
+
+### Running code:
+
+1. Install
+
+```sh
+pip install -e .
+```
+
+2. Run bot preview
+
+```sh
+aiogram-dialog-preview deseos17.main.bot:get_dispatcher
+```
+
+3. Run fastapi
+
+```sh
+uvicorn deseos17.main.web:app
+```

@@ -28,18 +28,31 @@
 
 ### [pre05.domain_errors](../../../tree/pre05.domain_errors) (2023.04.05)
 
-1. Access related exceptions moved to domain layer. So no need to do same raises in all use cases
+1. Access related exceptions moved to domain layer. So no need to do same
+   raises in all use cases
 
-### ...
+### [pre05.presentation](../../../tree/pre05.presentation) (2023.05.21)
 
 1. Created layout for interface layer. It is split into 2 packages:
-   * presentation (primary adapters in hexagonal architecture) here will be all related to application entrypoints: controllers and presenters.
-     Actually we have two ways of interacting with our application:
-     * web api (REST-like). It is going to be implemented using FastApi.
-     * Telegram bot. It will use aiogram-dialogs
-   * adapters. We will put here data access objects and clients for external APIs
+    * presentation (primary adapters in hexagonal architecture) here will be
+      all related to application entrypoints: controllers and presenters.
+      Actually we have two ways of interacting with our application:
+        * web api (REST-like). It is going to be implemented using FastApi.
+        * Telegram bot. It will use aiogram-dialogs
+    * adapters. We will put here data access objects and clients for external
+      APIs
 2. Created simple telegram dialog to test how DI can be implemented
-    * Use cases created inside controllers by calling provided factories
-    * Factories are injected during registration process
-    * Open question when to release resources. It can be done converting factories  context manager or inside middleware
+    * Use case interactors are created inside controllers by calling factory
+      methods
+    * Single factory is used for creating all use case interactors
+    * Factory is injected by passing it to a dispatcher.
+    * We are going to release interactor resources by using factory as a
+      context manager
+3. Created simple fastapi route to provide same functiontality:
+    * Interactor Factory is injected using Depends
+    * Interactors are created by calling factory methods as it is done in
+      telegram bot
+    * Pydantic schema is created to parse user data. It is slightly different
+      from DTO as UserId in provided separately
+    * Authentication currently is planned to be done in presentation level
 3. Stub db gateway and runnable main added
