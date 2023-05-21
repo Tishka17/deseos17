@@ -1,6 +1,6 @@
 import asyncio
 import os
-from functools import partial
+from contextlib import contextmanager
 
 from aiogram import Bot, Dispatcher
 
@@ -9,32 +9,35 @@ from deseos17.application.create_wish.use_case import CreateWish
 from deseos17.application.view_wishlist.use_case import ViewWishList
 from deseos17.domain.services.access import AccessService
 from deseos17.domain.services.wish import WishService
+from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.telegram.new_wish.dialog import new_wish_dialog
 
 
-def view_wishlist_factory(db_gateway: FakeGateway) -> ViewWishList:
-    return ViewWishList(
-        db_gateway=db_gateway,
-        access_service=AccessService(),
-        wish_service=WishService(),
-    )
+class IoC(InteractorFactory):
+    def __init__(self):
+        self.db_gateway = FakeGateway()
 
+    @contextmanager
+    def view_wishlist(self) -> ViewWishList:
+        yield ViewWishList(
+            db_gateway=self.db_gateway,
+            access_service=AccessService(),
+            wish_service=WishService(),
+        )
 
-def create_wish_factory(db_gateway: FakeGateway) -> CreateWish:
-    return CreateWish(
-        db_gateway=db_gateway,
-        access_service=AccessService(),
-        wish_service=WishService(),
-    )
+    @contextmanager
+    def create_wish(self) -> CreateWish:
+        yield CreateWish(
+            db_gateway=self.db_gateway,
+            access_service=AccessService(),
+            wish_service=WishService(),
+        )
 
 
 def get_dispatcher():
-    dp = Dispatcher()
-    db_gateway = FakeGateway()
-    dp.include_router(new_wish_dialog(
-        view_wishlist_factory=partial(view_wishlist_factory, db_gateway),
-        new_wish_factory=partial(create_wish_factory, db_gateway),
-    ))
+    ioc = IoC()
+    dp = Dispatcher(ioc=ioc)
+    dp.include_router(new_wish_dialog)
     return dp
 
 

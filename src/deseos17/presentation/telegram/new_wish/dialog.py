@@ -7,95 +7,75 @@ from aiogram_dialog.widgets.input.text import ManagedTextInputAdapter
 from aiogram_dialog.widgets.kbd import Button, Row, Back, Cancel, Next
 from aiogram_dialog.widgets.text import Format, Const
 
-from deseos17.application.common.use_case import UseCaseFactory
 from deseos17.application.create_wish.dto import NewWishDTO
-from deseos17.application.create_wish.use_case import CreateWish
-from deseos17.application.view_wishlist.use_case import ViewWishList
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId
-from .. import states
+from deseos17.presentation.interactor_factory import InteractorFactory
+from deseos17.presentation.telegram import states
 
 TEXT_INPUT_ID = "text"
 
 
-class NewWishController:
-    def __init__(
-            self,
-            view_wishlist_factory: UseCaseFactory[ViewWishList],
-            new_wish_factory: UseCaseFactory[CreateWish],
-    ):
-        self.view_wishlist_factory = view_wishlist_factory
-        self.new_wish_factory = new_wish_factory
+def get_wishlist_id(dialog_manager) -> WishListId:
+    return dialog_manager.start_data["wishlist_id"]
 
-    def get_wishlist_id(self, dialog_manager) -> WishListId:
-        return dialog_manager.start_data["wishlist_id"]
 
-    def wishlist_getter(
-            self, dialog_manager: DialogManager, **kwargs,
-    ) -> dict[str, Any]:
-        view_wishlist = self.view_wishlist_factory()
-        wishlist = view_wishlist(self.get_wishlist_id(dialog_manager))
+def wishlist_getter(
+        dialog_manager: DialogManager,
+        ioc: InteractorFactory,
+        **kwargs,
+) -> dict[str, Any]:
+    with ioc.view_wishlist() as view_wishlist:
+        wishlist = view_wishlist(get_wishlist_id(dialog_manager))
         return {
             "wishlist": wishlist,
         }
 
-    def preview_getter(
-            self, dialog_manager: DialogManager, **kwargs,
-    ) -> dict[str, Any]:
-        text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
-        return {
-            "text": text.get_value(),
-        }
 
-    async def on_done(
-            self, event: CallbackQuery, button, dialog_manager: DialogManager,
-    ) -> None:
-        text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
-        new_wishlist = self.new_wish_factory()
-        new_wishlist(NewWishDTO(
+def preview_getter(
+        dialog_manager: DialogManager, **kwargs,
+) -> dict[str, Any]:
+    text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
+    return {
+        "text": text.get_value(),
+    }
+
+
+async def on_done(
+        event: CallbackQuery, button, dialog_manager: DialogManager,
+) -> None:
+    text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
+    ioc: InteractorFactory = dialog_manager.middleware_data["ioc"]
+    with ioc.create_wish() as create_wish:
+        create_wish(NewWishDTO(
             text=text.get_value(),
-            wishlist_id=self.get_wishlist_id(dialog_manager),
+            wishlist_id=get_wishlist_id(dialog_manager),
             user_id=UserId(event.from_user.id),
         ))
 
 
-def input_text_window(controller: NewWishController) -> Window:
-    return Window(
+new_wish_dialog = Dialog(
+    Window(
         Format(
             "You are going to add wish into list `{wishlist.name}`.\n"
             "Please, provide text:"
         ),
         TextInput(id=TEXT_INPUT_ID, on_success=Next()),
-        getter=controller.wishlist_getter,
+        getter=wishlist_getter,
         state=states.NewWish.text,
-    )
-
-
-def done_window(controller: NewWishController) -> Window:
-    return Window(
+    ),
+    Window(
         Format(
             "You are going to add wish into list `{wishlist.name}`.\n"
             "Your text is: \n{text}\n\n"
             "Please, confirm."
         ),
         Row(
-            Button(text=Const("Ok"), id="ok", on_click=controller.on_done),
+            Button(text=Const("Ok"), id="ok", on_click=on_done),
             Back(),
             Cancel()
         ),
-        getter=[controller.wishlist_getter, controller.preview_getter],
+        getter=[wishlist_getter, preview_getter],
         state=states.NewWish.preview,
-    )
-
-
-def new_wish_dialog(
-        view_wishlist_factory: UseCaseFactory[ViewWishList],
-        new_wish_factory: UseCaseFactory[CreateWish],
-) -> Dialog:
-    controller = NewWishController(
-        view_wishlist_factory, new_wish_factory,
-    )
-    return Dialog(
-        input_text_window(controller),
-        done_window(controller),
-    )
+    ),
+)
