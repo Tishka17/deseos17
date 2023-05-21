@@ -1,11 +1,11 @@
-from abc import abstractmethod
-from typing import Protocol, ContextManager
+from abc import abstractmethod, ABC
+from typing import ContextManager
 
 from deseos17.application.create_wish.use_case import CreateWish
 from deseos17.application.view_wishlist.use_case import ViewWishList
 
 
-class InteractorFactory(Protocol):
+class InteractorFactory(ABC):
     @abstractmethod
     def create_wish(self) -> ContextManager[CreateWish]:
         raise NotImplementedError
