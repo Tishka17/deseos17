@@ -12,7 +12,7 @@ Algorithm = Literal[
 ]
 
 
-class HttpAuthenticator:
+class HttpAuthenticatorImpl:
     def __init__(
             self,
             secret: str,

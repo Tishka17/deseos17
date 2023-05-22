@@ -13,7 +13,6 @@ class TelegramAuthenticator(Authenticator):
         data_list = [
             f"auth_date={data.auth_date}",
             f"first_name={data.first_name}",
-            f"hash={data.hash}",
             f"id={data.id}",
             f"photo_url={data.photo_url}",
             f"username={data.username}",
@@ -22,6 +21,6 @@ class TelegramAuthenticator(Authenticator):
         expected_hash = hmac.new(
             key=self.secret_key,
             msg="\n".join(data_list).encode("utf-8"),
-            digestmod=sha256
+            digestmod=sha256,
         ).hexdigest()
         return expected_hash == data.hash
