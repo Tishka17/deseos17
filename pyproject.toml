@@ -22,6 +22,7 @@ dependencies = [
     "aiogram-dialog>=2.0.0b18",
     "fastapi==0.95.*",
     "uvicorn==0.22.*",
+    "jose==1.0.*",
 ]
 [project.optional-dependencies]
 test = [
