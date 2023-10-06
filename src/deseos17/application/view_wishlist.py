@@ -1,9 +1,28 @@
+from dataclasses import dataclass
+from typing import Protocol
+
 from deseos17.application.common.interactor import Interactor
+from deseos17.application.common.interfaces import (
+    WishListReader, ShareReader,
+)
+from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList
+from deseos17.domain.models.wish import WishListId
 from deseos17.domain.services.access import AccessService
 from deseos17.domain.services.wish import WishService
-from .dto import ViewWishListDTO
-from .interfaces import DbGateway
+
+
+@dataclass
+class ViewWishListDTO:
+    user_id: UserId
+    id: WishListId
+
+
+class DbGateway(
+    WishListReader,
+    ShareReader, Protocol,
+):
+    pass
 
 
 class ViewWishList(Interactor[ViewWishListDTO, WishList]):
