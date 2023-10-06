@@ -3,7 +3,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 
-from deseos17.presentation.telegram.new_wish.dialog import new_wish_dialog
+from deseos17.presentation.telegram.new_wish import new_wish_dialog
 from .ioc import IoC
 
 
