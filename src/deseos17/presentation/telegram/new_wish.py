@@ -7,7 +7,7 @@ from aiogram_dialog.widgets.input.text import ManagedTextInputAdapter
 from aiogram_dialog.widgets.kbd import Button, Row, Back, Cancel, Next
 from aiogram_dialog.widgets.text import Format, Const
 
-from deseos17.application.create_wish.dto import NewWishDTO
+from deseos17.application.create_wish import NewWishDTO
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory

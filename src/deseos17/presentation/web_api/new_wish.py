@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from deseos17.application.create_wish.dto import NewWishDTO
+from deseos17.application.create_wish import NewWishDTO
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId, WishId
 from deseos17.presentation.interactor_factory import InteractorFactory

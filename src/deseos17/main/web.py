@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from .ioc import IoC
 from ..presentation.interactor_factory import InteractorFactory
-from ..presentation.web_api.new_wish.router import wish_router
+from ..presentation.web_api.new_wish import wish_router
 
 
 def create_app():

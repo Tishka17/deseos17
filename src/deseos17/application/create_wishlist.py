@@ -1,12 +1,28 @@
-from deseos17.application.common.use_case import UseCase
+from dataclasses import dataclass
+from typing import Protocol
+
+from deseos17.application.common.interactor import Interactor
+from deseos17.application.common.interfaces import (
+    Comitter, WishListSaver,
+)
+from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId
 from deseos17.domain.services.wishlist import WishListService
 
-from .dto import NewWishListDTO
-from .interfaces import DbGateway
+
+class DbGateway(
+    Protocol, Comitter, WishListSaver,
+):
+    pass
 
 
-class CreateWishList(UseCase[NewWishListDTO, WishListId]):
+@dataclass
+class NewWishListDTO:
+    user_id: UserId
+    title: str
+
+
+class CreateWishList(Interactor[NewWishListDTO, WishListId]):
     def __init__(
             self,
             db_gateway: DbGateway,
