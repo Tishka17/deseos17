@@ -1,4 +1,4 @@
-from deseos17.application.common.use_case import UseCase
+from deseos17.application.common.interactor import Interactor
 from deseos17.domain.models.wish import Wish, WishList
 from deseos17.domain.services.access import AccessService
 from deseos17.domain.services.wish import WishService
@@ -6,7 +6,7 @@ from .dto import UpdateWishDTO
 from .interfaces import DbGateway
 
 
-class UpdateWish(UseCase[UpdateWishDTO, None]):
+class UpdateWish(Interactor[UpdateWishDTO, None]):
     def __init__(
             self,
             db_gateway: DbGateway,

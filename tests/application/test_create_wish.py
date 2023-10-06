@@ -6,7 +6,7 @@ import pytest
 from deseos17.application.common.exceptions import AccessDenied
 from deseos17.application.create_wish.dto import NewWishDTO
 from deseos17.application.create_wish.interfaces import DbGateway
-from deseos17.application.create_wish.use_case import CreateWish
+from deseos17.application.create_wish.interactor import CreateWish
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList, Wish, WishId, WishListId
 
