@@ -56,3 +56,8 @@
       from DTO as UserId in provided separately
     * Authentication currently is planned to be done in presentation level
 3. Stub db gateway and runnable main added
+
+### pre06.cleanup
+
+1. Renamed `UseCase` classes to `Interactor` so the naming is more strict
+2. Simplified dirs structure of application and presentation layer. Removed redundant packages.

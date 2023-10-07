@@ -7,7 +7,7 @@ from deseos17.adapters.auth.http import HttpAuthenticatorImpl
 from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.web_api.auth import HttpAuthenticator
 from deseos17.presentation.web_api.login.router import index_router
-from deseos17.presentation.web_api.new_wish.router import wish_router
+from deseos17.presentation.web_api.new_wish import wish_router
 from .ioc import IoC
 
 

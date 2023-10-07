@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import List
 
-from deseos17.application.create_wish.interfaces import (
+from deseos17.application.create_wish import (
     DbGateway as CreateWishDbGateway,
 )
-from deseos17.application.view_wishlist.interfaces import (
+from deseos17.application.view_wishlist import (
     DbGateway as ViewWishListDbGateway,
 )
 from deseos17.domain.models.sharing import ShareRule
