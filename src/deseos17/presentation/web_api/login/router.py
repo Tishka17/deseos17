@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing_extensions import Annotated
 
 from fastapi import APIRouter, Request, Depends, Response
 from jinja2 import PackageLoader
