@@ -1,8 +1,7 @@
 import hmac
 from hashlib import sha256
 
-from deseos17.application.auth.dto import LoginResultDTO
-from deseos17.application.auth.interfaces import Authenticator
+from deseos17.application.authenticate import Authenticator, LoginResultDTO
 
 
 class TelegramAuthenticator(Authenticator):

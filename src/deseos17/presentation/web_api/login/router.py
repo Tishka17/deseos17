@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request, Depends, Response
 from jinja2 import PackageLoader
 from starlette.templating import Jinja2Templates
 
-from deseos17.application.auth.dto import LoginResultDTO
+from deseos17.application.authenticate import LoginResultDTO
 from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.web_api.auth import HttpAuthenticator
 
@@ -47,5 +47,8 @@ def login(
             hash=hash,
         ))
     token = authenticator.create_access_token(user_id)
-    response.set_cookie("token", token)
+    response.set_cookie(
+        "token", token,
+        httponly=True,
+    )
     return "ok"

@@ -2,7 +2,7 @@ from contextlib import contextmanager
 
 from deseos17.adapters.auth.telegram import TelegramAuthenticator
 from deseos17.adapters.database.fake_db import FakeGateway
-from deseos17.application.auth.use_case import Authenticate
+from deseos17.application.authenticate import Authenticate
 from deseos17.application.create_wish import CreateWish
 from deseos17.application.view_wishlist import ViewWishList
 from deseos17.domain.services.access import AccessService
