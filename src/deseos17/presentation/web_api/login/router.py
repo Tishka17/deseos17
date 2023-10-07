@@ -6,7 +6,7 @@ from starlette.templating import Jinja2Templates
 
 from deseos17.application.authenticate import LoginResultDTO
 from deseos17.presentation.interactor_factory import InteractorFactory
-from deseos17.presentation.web_api.auth import HttpAuthenticator
+from deseos17.presentation.web_api.token import TokenProcessor
 
 index_router = APIRouter()
 
@@ -34,7 +34,7 @@ def login(
         photo_url: str,
         hash: str,
         ioc: Annotated[InteractorFactory, Depends()],
-        authenticator: Annotated[HttpAuthenticator, Depends()],
+        authenticator: Annotated[TokenProcessor, Depends()],
         response: Response,
 ) -> str:
     with ioc.authenticate() as authenticate:

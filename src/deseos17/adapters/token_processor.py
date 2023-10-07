@@ -12,7 +12,7 @@ Algorithm = Literal[
 ]
 
 
-class HttpAuthenticatorImpl:
+class JwtTokenProcessor:
     def __init__(
             self,
             secret: str,
