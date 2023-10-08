@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, Optional
 
 from deseos17.application.common.interactor import Interactor
 from deseos17.domain.exceptions.access import AuthenticationError
@@ -9,11 +9,12 @@ from deseos17.domain.models.user_id import UserId
 @dataclass
 class LoginResultDTO:
     id: int
-    first_name: str
-    username: str
-    photo_url: str
     auth_date: int
     hash: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    photo_url: Optional[str] = None
 
 
 class Authenticator(Protocol):

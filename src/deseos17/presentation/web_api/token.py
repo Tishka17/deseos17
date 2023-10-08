@@ -1,10 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Annotated
 
-from fastapi import Cookie, Depends, HTTPException
-from starlette import status
-
-from deseos17.domain.exceptions.access import AuthenticationError
 from deseos17.domain.models.user_id import UserId
 
 

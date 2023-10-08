@@ -2,24 +2,29 @@ import hmac
 from hashlib import sha256
 
 from deseos17.application.authenticate import Authenticator, LoginResultDTO
+from aiogram.utils.auth_widget import check_signature
 
 
 class TelegramAuthenticator(Authenticator):
     def __init__(self, token: str):
-        self.secret_key = sha256(token.encode("utf-8")).digest()
+        self.token = token
 
     def validate(self, data: LoginResultDTO) -> bool:
-        data_list = [
-            f"auth_date={data.auth_date}",
-            f"first_name={data.first_name}",
-            f"id={data.id}",
-            f"photo_url={data.photo_url}",
-            f"username={data.username}",
-        ]
-        data_list.sort()
-        expected_hash = hmac.new(
-            key=self.secret_key,
-            msg="\n".join(data_list).encode("utf-8"),
-            digestmod=sha256,
-        ).hexdigest()
-        return expected_hash == data.hash
+        fields = {
+            "id": data.id,
+            "first_name": data.first_name,
+            "last_name": data.last_name,
+            "username": data.username,
+            "photo_url": data.photo_url,
+            "auth_date": data.auth_date,
+        }
+        fields = {
+            k: v
+            for k, v in fields.items()
+            if v is not None
+        }
+        return check_signature(
+            token=self.token,
+            hash=data.hash,
+            **fields,
+        )

@@ -1,10 +1,14 @@
+from typing import Optional
+
+from starlette import status
 from typing_extensions import Annotated
 
-from fastapi import APIRouter, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends, Response, HTTPException
 from jinja2 import PackageLoader
 from starlette.templating import Jinja2Templates
 
 from deseos17.application.authenticate import LoginResultDTO
+from deseos17.domain.exceptions import AuthenticationError
 from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.web_api.token import TokenProcessor
 
@@ -26,26 +30,18 @@ def index(
 
 @index_router.get("/login")
 def login(
-        request: Request,
-        id: int,
-        auth_date: int,
-        first_name: str,
-        username: str,
-        photo_url: str,
-        hash: str,
         ioc: Annotated[InteractorFactory, Depends()],
         authenticator: Annotated[TokenProcessor, Depends()],
         response: Response,
+        fields: Annotated[LoginResultDTO, Depends()],
 ) -> str:
     with ioc.authenticate() as authenticate:
-        user_id = authenticate(LoginResultDTO(
-            id=id,
-            auth_date=auth_date,
-            first_name=first_name,
-            username=username,
-            photo_url=photo_url,
-            hash=hash,
-        ))
+        try:
+            user_id = authenticate(fields)
+        except AuthenticationError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid data"
+            )
     token = authenticator.create_access_token(user_id)
     response.set_cookie(
         "token", token,
