@@ -3,6 +3,7 @@ from typing import Literal
 
 from jose import jwt, JWTError
 
+from deseos17.application.common.id_provider import IdProvider
 from deseos17.domain.exceptions.access import AuthenticationError
 from deseos17.domain.models.user_id import UserId
 
@@ -46,3 +47,16 @@ class JwtTokenProcessor:
             return UserId(int(payload["sub"]))
         except ValueError:
             raise AuthenticationError
+
+
+class TokenIdProvider(IdProvider):
+    def __init__(
+            self,
+            token_processor: JwtTokenProcessor,
+            token: str,
+    ):
+        self.token_processor = token_processor
+        self.token = token
+
+    def get_current_user_id(self) -> UserId:
+        return self.token_processor.validate_token(self.token)

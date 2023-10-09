@@ -1,17 +1,16 @@
-import os
 from datetime import timedelta
 
 from aiogram import Bot
 from fastapi import FastAPI
 
-from deseos17.adapters.token_processor import JwtTokenProcessor
+from deseos17.adapters.auth.token import JwtTokenProcessor
 from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.web_api.login.router import index_router
 from deseos17.presentation.web_api.new_wish import wish_router
-from deseos17.presentation.web_api.token import TokenProcessor
-from .config import load_web_config, WebConfig
+from .config import load_web_config
 from .ioc import IoC
-from ..presentation.web_api.config import WebViewConfig
+from deseos17.presentation.web_api.dependencies.config import WebViewConfig
+from ..adapters.auth.telegram_auth import TelegramAuthenticator
 
 
 class WebViewConfigProvider:
@@ -43,8 +42,10 @@ def create_app() -> FastAPI:
         expires=timedelta(minutes=15),
         algorithm="HS256",
     )
+    telegram_authenticator = TelegramAuthenticator(config.bot_token)
     app.dependency_overrides[InteractorFactory] = lambda: ioc
-    app.dependency_overrides[TokenProcessor] = lambda: token_processor
+    app.dependency_overrides[JwtTokenProcessor] = lambda: token_processor
+    app.dependency_overrides[TelegramAuthenticator] = lambda: telegram_authenticator
     app.dependency_overrides[WebViewConfig] = web_view_config_provider
     app.include_router(wish_router)
     app.include_router(index_router)

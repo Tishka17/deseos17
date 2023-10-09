@@ -1,6 +1,5 @@
 from contextlib import contextmanager
 
-from deseos17.adapters.auth.telegram import TelegramAuthenticator
 from deseos17.adapters.database.fake_db import FakeGateway
 from deseos17.application.authenticate import Authenticate
 from deseos17.application.common.id_provider import IdProvider
@@ -17,15 +16,17 @@ class IoC(InteractorFactory):
         self.tg_token = tg_token
 
     @contextmanager
-    def authenticate(self) -> Authenticate:
+    def authenticate(
+            self, id_provider: IdProvider,
+    ) -> Authenticate:
         yield Authenticate(
-            authenticator=TelegramAuthenticator(self.tg_token),
+            id_provider=id_provider,
         )
 
     @contextmanager
     def view_wishlist(
             self, id_provider: IdProvider,
-   ) -> ViewWishList:
+    ) -> ViewWishList:
         yield ViewWishList(
             db_gateway=self.db_gateway,
             access_service=AccessService(),
@@ -36,7 +37,7 @@ class IoC(InteractorFactory):
     @contextmanager
     def create_wish(
             self, id_provider: IdProvider,
-   ) -> CreateWish:
+    ) -> CreateWish:
         yield CreateWish(
             db_gateway=self.db_gateway,
             access_service=AccessService(),

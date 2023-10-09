@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Protocol, Optional
+from typing import Optional
 
+from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.common.interactor import Interactor
-from deseos17.domain.exceptions.access import AuthenticationError
 from deseos17.domain.models.user_id import UserId
 
 
@@ -10,27 +10,20 @@ from deseos17.domain.models.user_id import UserId
 class LoginResultDTO:
     id: int
     auth_date: int
-    hash: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     username: Optional[str] = None
     photo_url: Optional[str] = None
 
 
-class Authenticator(Protocol):
-    def validate(self, data: LoginResultDTO) -> bool:
-        raise NotImplementedError
-
-
 class Authenticate(Interactor[LoginResultDTO, UserId]):
     def __init__(
             self,
-            authenticator: Authenticator,
+            id_provider: IdProvider,
     ):
-        self.authenticator = authenticator
+        self.id_provider = id_provider
 
     def __call__(self, data: LoginResultDTO) -> UserId:
-        if not self.authenticator.validate(data):
-            raise AuthenticationError
+        user_id = self.id_provider.get_current_user_id()
         # TODO: save user to DB
-        return UserId(data.id)
+        return UserId(user_id)

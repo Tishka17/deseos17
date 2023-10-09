@@ -9,7 +9,9 @@ from deseos17.application.view_wishlist import ViewWishList
 
 class InteractorFactory(ABC):
     @abstractmethod
-    def authenticate(self) -> ContextManager[Authenticate]:
+    def authenticate(
+            self, id_provider: IdProvider,
+    ) -> ContextManager[Authenticate]:
         raise NotImplementedError
 
     @abstractmethod
