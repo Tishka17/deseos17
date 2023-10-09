@@ -20,7 +20,12 @@ pip install -e .
 aiogram-dialog-preview deseos17.main.bot:get_dispatcher
 ```
 
-3. Run fastapi
+3. Provide env variables:
+
+* `BOT_TOKEN` - your telegram bot token
+* `JWT_SECRET` - some secret long string to work with JWT tokens
+
+4. Run fastapi
 
 ```sh
 uvicorn deseos17.main.web:app

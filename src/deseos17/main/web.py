@@ -8,16 +8,17 @@ from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.web_api.login.router import index_router
 from deseos17.presentation.web_api.new_wish import wish_router
 from deseos17.presentation.web_api.token import TokenProcessor
+from .config import load_web_config
 from .ioc import IoC
 
 
 def create_app() -> FastAPI:
     app = FastAPI()
-    token = os.getenv("BOT_TOKEN")
-    ioc = IoC(tg_token=token)
+    config = load_web_config()
+    ioc = IoC(tg_token=config.bot_token)
 
     token_processor = JwtTokenProcessor(
-        secret=token,
+        secret=config.jwt_secret,
         expires=timedelta(minutes=15),
         algorithm="HS256",
     )
