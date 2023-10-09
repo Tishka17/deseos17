@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager
@@ -7,8 +7,9 @@ from aiogram_dialog.widgets.input.text import ManagedTextInputAdapter
 from aiogram_dialog.widgets.kbd import Button, Row, Back, Cancel, Next
 from aiogram_dialog.widgets.text import Format, Const
 
+from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import NewWishDTO
-from deseos17.domain.models.user_id import UserId
+from deseos17.application.view_wishlist import ViewWishListDTO
 from deseos17.domain.models.wish import WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.telegram import states
@@ -23,10 +24,12 @@ def get_wishlist_id(dialog_manager) -> WishListId:
 def wishlist_getter(
         dialog_manager: DialogManager,
         ioc: InteractorFactory,
+        id_provider: IdProvider,
         **kwargs,
-) -> dict[str, Any]:
-    with ioc.view_wishlist() as view_wishlist:
-        wishlist = view_wishlist(get_wishlist_id(dialog_manager))
+) -> Dict[str, Any]:
+    with ioc.view_wishlist(id_provider) as view_wishlist:
+        wishlist_id = get_wishlist_id(dialog_manager)
+        wishlist = view_wishlist(ViewWishListDTO(wishlist_id))
         return {
             "wishlist": wishlist,
         }
@@ -34,7 +37,7 @@ def wishlist_getter(
 
 def preview_getter(
         dialog_manager: DialogManager, **kwargs,
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
     return {
         "text": text.get_value(),
@@ -46,11 +49,11 @@ async def on_done(
 ) -> None:
     text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
     ioc: InteractorFactory = dialog_manager.middleware_data["ioc"]
-    with ioc.create_wish() as create_wish:
+    id_provider: IdProvider = dialog_manager.middleware_data["id_provider"]
+    with ioc.create_wish(id_provider) as create_wish:
         create_wish(NewWishDTO(
             text=text.get_value(),
             wishlist_id=get_wishlist_id(dialog_manager),
-            user_id=UserId(event.from_user.id),
         ))
 
 

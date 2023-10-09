@@ -1,13 +1,12 @@
-from typing import Annotated
+from typing_extensions import Annotated
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import NewWishDTO
-from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId, WishId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from deseos17.presentation.web_api.auth import get_user_id
 
 wish_router = APIRouter(prefix="/wishes")
 
@@ -20,12 +19,11 @@ class NewWishSchema(BaseModel):
 @wish_router.post("/")
 def new_wish(
         ioc: Annotated[InteractorFactory, Depends()],
-        user_id: Annotated[UserId, Depends(get_user_id)],
+        id_provider: Annotated[IdProvider, Depends()],
         data: NewWishSchema,
 ) -> WishId:
-    with ioc.create_wish() as create_wish:
+    with ioc.create_wish(id_provider) as create_wish:
         return create_wish(NewWishDTO(
-            user_id=user_id,
             wishlist_id=data.wishlist_id,
             text=data.text,
         ))

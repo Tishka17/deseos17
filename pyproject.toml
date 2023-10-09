@@ -12,16 +12,18 @@ authors = [
     { name = "Andrey Tikhonov", email = "17@itishka.org" },
 ]
 description = "Wishlist with clean architecture"
-requires-python = ">=3.10"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "aiogram-dialog>=2.0.0b18",
+    "aiogram-dialog>=2.0.0",
     "fastapi==0.95.*",
     "uvicorn==0.22.*",
+    "python-jose[cryptography]==3.3.*",
+    "typing-extensions==4.8.*",
 ]
 [project.optional-dependencies]
 test = [
