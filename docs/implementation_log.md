@@ -61,3 +61,7 @@
 
 1. Renamed `UseCase` classes to `Interactor` so the naming is more strict
 2. Simplified dirs structure of application and presentation layer. Removed redundant packages.
+3. Added `IdProvider` instead of passig `user_id` directly to interactor. This will allow accessing external services (like OAuth server) for authorization and retrieving some info. Implementsations of `IdProvider` differ for different intercaes:
+   * For web app we use cookies and JWT token there
+   * For telegram bot we just use data retrieved within event
+4. Implemented authenticating using telegram widget
