@@ -10,6 +10,8 @@ from starlette.templating import Jinja2Templates
 from deseos17.application.authenticate import LoginResultDTO
 from deseos17.domain.exceptions import AuthenticationError
 from deseos17.presentation.interactor_factory import InteractorFactory
+from deseos17.presentation.web_api.config import WebViewConfig
+from deseos17.presentation.web_api.depends_stub import Stub
 from deseos17.presentation.web_api.token import TokenProcessor
 
 index_router = APIRouter()
@@ -21,10 +23,15 @@ templates = Jinja2Templates(directory="templates", loader=jinja_loader)
 @index_router.get("/index")
 def index(
         request: Request,
+        view_config: Annotated[WebViewConfig, Depends(Stub(WebViewConfig))],
 ):
     return templates.TemplateResponse(
         "login.html",
-        {"request": request}
+        {
+            "request": request,
+            "login_url": view_config.login_url,
+            "bot_name": view_config.bot_name,
+        }
     )
 
 
