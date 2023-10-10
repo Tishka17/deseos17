@@ -10,12 +10,16 @@ from .config import load_bot_config, BotConfig
 from .ioc import IoC
 
 
-def get_dispatcher(config: BotConfig):
+def get_dispatcher(config: BotConfig) -> Dispatcher:
     ioc = IoC(tg_token=config.bot_token)
     dp = Dispatcher(ioc=ioc)
     dp.update.middleware(IdProviderMiddleware())
     dp.include_router(new_wish_dialog)
     return dp
+
+
+def get_dispatcher_preview() -> Dispatcher:
+    return get_dispatcher(BotConfig(bot_token="--"))
 
 
 async def bot_main():
