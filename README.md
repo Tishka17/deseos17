@@ -17,7 +17,7 @@ pip install -e .
 2. Run bot preview
 
 ```sh
-aiogram-dialog-preview deseos17.main.bot:get_dispatcher
+aiogram-dialog-preview deseos17.main.bot:get_dispatcher_preview
 ```
 
 3. Provide env variables:

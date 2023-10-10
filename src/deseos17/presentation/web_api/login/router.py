@@ -1,18 +1,19 @@
-from typing import Optional
-
-from starlette import status
-from typing_extensions import Annotated
-
 from fastapi import APIRouter, Request, Depends, Response, HTTPException
 from jinja2 import PackageLoader
+from starlette import status
 from starlette.templating import Jinja2Templates
+from typing_extensions import Annotated
 
+from deseos17.adapters.auth.telegram_auth import (
+    TelegramAuthenticator, TelegramAuthIdProvider,
+)
+from deseos17.adapters.auth.token import JwtTokenProcessor
 from deseos17.application.authenticate import LoginResultDTO
+from deseos17.application.common.id_provider import IdProvider
 from deseos17.domain.exceptions import AuthenticationError
 from deseos17.presentation.interactor_factory import InteractorFactory
-from deseos17.presentation.web_api.config import WebViewConfig
-from deseos17.presentation.web_api.depends_stub import Stub
-from deseos17.presentation.web_api.token import TokenProcessor
+from deseos17.presentation.web_api.dependencies.config import WebViewConfig
+from deseos17.presentation.web_api.dependencies.depends_stub import Stub
 
 index_router = APIRouter()
 
@@ -35,21 +36,36 @@ def index(
     )
 
 
+def telegram_auth_id_provider(
+        request: Request,
+        hash: str,
+        authenticator: Annotated[TelegramAuthenticator, Depends(Stub(TelegramAuthenticator))],
+):
+    return TelegramAuthIdProvider(
+        authenticator=authenticator,
+        hash=hash,
+        fields=request.query_params,
+    )
+
+
 @index_router.get("/login")
 def login(
         ioc: Annotated[InteractorFactory, Depends()],
-        authenticator: Annotated[TokenProcessor, Depends()],
+        token_processor: Annotated[
+            JwtTokenProcessor, Depends(Stub(JwtTokenProcessor)),
+        ],
+        id_provider: Annotated[IdProvider, Depends(telegram_auth_id_provider)],
         response: Response,
         fields: Annotated[LoginResultDTO, Depends()],
 ) -> str:
-    with ioc.authenticate() as authenticate:
+    with ioc.authenticate(id_provider) as authenticate:
         try:
             user_id = authenticate(fields)
         except AuthenticationError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid data"
             )
-    token = authenticator.create_access_token(user_id)
+    token = token_processor.create_access_token(user_id)
     response.set_cookie(
         "token", token,
         httponly=True,

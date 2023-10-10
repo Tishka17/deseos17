@@ -7,8 +7,7 @@ from deseos17.application.common.interfaces import (
     Comitter, WishReader, WishListReader, WishSaver, WishListSaver,
     ShareReader,
 )
-from deseos17.domain.models.wish import Wish, WishList
-from deseos17.domain.models.wish import WishId
+from deseos17.domain.models.wish import Wish, WishList, WishId
 from deseos17.domain.services.access import AccessService
 from deseos17.domain.services.wish import WishService
 
