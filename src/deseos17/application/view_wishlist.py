@@ -6,8 +6,7 @@ from deseos17.application.common.interactor import Interactor
 from deseos17.application.common.interfaces import (
     WishListReader, ShareReader,
 )
-from deseos17.domain.models.wish import WishList
-from deseos17.domain.models.wish import WishListId
+from deseos17.domain.models.wish import WishList, WishListId
 from deseos17.domain.services.access import AccessService
 from deseos17.domain.services.wish import WishService
 
