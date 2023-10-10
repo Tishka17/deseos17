@@ -7,6 +7,7 @@ from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import NewWishDTO
 from deseos17.domain.models.wish import WishListId, WishId
 from deseos17.presentation.interactor_factory import InteractorFactory
+from deseos17.presentation.web_api.dependencies.depends_stub import Stub
 
 wish_router = APIRouter(prefix="/wishes")
 
@@ -19,7 +20,7 @@ class NewWishSchema(BaseModel):
 @wish_router.post("/")
 def new_wish(
         ioc: Annotated[InteractorFactory, Depends()],
-        id_provider: Annotated[IdProvider, Depends()],
+        id_provider: Annotated[IdProvider, Depends(Stub(IdProvider))],
         data: NewWishSchema,
 ) -> WishId:
     with ioc.create_wish(id_provider) as create_wish:

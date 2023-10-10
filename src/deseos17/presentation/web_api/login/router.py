@@ -51,7 +51,9 @@ def telegram_auth_id_provider(
 @index_router.get("/login")
 def login(
         ioc: Annotated[InteractorFactory, Depends()],
-        token_processor: Annotated[JwtTokenProcessor, Depends()],
+        token_processor: Annotated[
+            JwtTokenProcessor, Depends(Stub(JwtTokenProcessor)),
+        ],
         id_provider: Annotated[IdProvider, Depends(telegram_auth_id_provider)],
         response: Response,
         fields: Annotated[LoginResultDTO, Depends()],
