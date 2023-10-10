@@ -86,4 +86,9 @@ class FakeWishGateway(
     def get_share_rules(
             self, wishlist_id: WishListId, user_id: UserId,
     ) -> List[ShareRule]:
-        return []
+        return [ShareRule(
+            wishlist_id=wishlist_id,
+            user_id=user_id,
+            read_allowed=True,
+            write_allowed=True,
+        )]
