@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from deseos17.presentation.telegram.middlewares.id_provider import (
     IdProviderMiddleware
 )
-from deseos17.presentation.telegram.new_wish import new_wish_dialog
+from deseos17.presentation.telegram.create_wish import create_wish_dialog
 from .config import load_bot_config, BotConfig
 from .ioc import IoC
 
@@ -14,7 +14,7 @@ def get_dispatcher(config: BotConfig) -> Dispatcher:
     ioc = IoC(tg_token=config.bot_token)
     dp = Dispatcher(ioc=ioc)
     dp.update.middleware(IdProviderMiddleware())
-    dp.include_router(new_wish_dialog)
+    dp.include_router(create_wish_dialog)
     return dp
 
 

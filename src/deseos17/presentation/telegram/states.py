@@ -1,6 +1,6 @@
 from aiogram.fsm.state import StatesGroup, State
 
 
-class NewWish(StatesGroup):
+class CreateWish(StatesGroup):
     text = State()
     preview = State()

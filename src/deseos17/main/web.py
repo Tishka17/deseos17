@@ -7,9 +7,10 @@ from fastapi import FastAPI
 from deseos17.adapters.auth.telegram_auth import TelegramAuthenticator
 from deseos17.adapters.auth.token import JwtTokenProcessor
 from deseos17.presentation.interactor_factory import InteractorFactory
+from deseos17.presentation.web_api.create_wish import wish_router
 from deseos17.presentation.web_api.dependencies.config import WebViewConfig
+from deseos17.presentation.web_api.get_own_wishlists import wishlist_router
 from deseos17.presentation.web_api.login.router import index_router
-from deseos17.presentation.web_api.new_wish import wish_router
 from .config import load_web_config
 from .ioc import IoC
 
@@ -63,6 +64,7 @@ def create_app() -> FastAPI:
         WebViewConfig: web_view_config_provider,
     })
     app.include_router(wish_router)
+    app.include_router(wishlist_router)
     app.include_router(index_router)
     return app
 

@@ -57,7 +57,7 @@ async def on_done(
         ))
 
 
-new_wish_dialog = Dialog(
+create_wish_dialog = Dialog(
     Window(
         Format(
             "You are going to add wish into list `{wishlist.name}`.\n"
@@ -65,7 +65,7 @@ new_wish_dialog = Dialog(
         ),
         TextInput(id=TEXT_INPUT_ID, on_success=Next()),
         getter=wishlist_getter,
-        state=states.NewWish.text,
+        state=states.CreateWish.text,
     ),
     Window(
         Format(
@@ -79,6 +79,6 @@ new_wish_dialog = Dialog(
             Cancel()
         ),
         getter=[wishlist_getter, preview_getter],
-        state=states.NewWish.preview,
+        state=states.CreateWish.preview,
     ),
 )
