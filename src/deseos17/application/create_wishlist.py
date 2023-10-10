@@ -10,7 +10,7 @@ from deseos17.domain.services.wishlist import WishListService
 
 
 class WishDbGateway(
-    Protocol, WishListSaver,
+   WishListSaver, Protocol,
 ):
     pass
 
@@ -23,7 +23,7 @@ class NewWishListDTO:
 class CreateWishList(Interactor[NewWishListDTO, WishListId]):
     def __init__(
             self,
-            wish_db_gateway: WishDbGateway,
+            wish_db_gateway: WishListSaver,
             wishlist_service: WishListService,
             id_provider: IdProvider,
             uow: UoW,
