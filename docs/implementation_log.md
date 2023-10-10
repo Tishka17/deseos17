@@ -57,11 +57,13 @@
     * Authentication currently is planned to be done in presentation level
 3. Stub db gateway and runnable main added
 
-### pre06.cleanup
+### [pre06.authentication](../../../tree/pre06.authentication) (2023.10.10)
 
 1. Renamed `UseCase` classes to `Interactor` so the naming is more strict
 2. Simplified dirs structure of application and presentation layer. Removed redundant packages.
 3. Added `IdProvider` instead of passig `user_id` directly to interactor. This will allow accessing external services (like OAuth server) for authorization and retrieving some info. Implementsations of `IdProvider` differ for different intercaes:
    * For web app we use cookies and JWT token there
    * For telegram bot we just use data retrieved within event
+   * For authentication result we use telegram response data
 4. Implemented authenticating using telegram widget
+5. Added configuration processing. We have one class describing app config, while different classes expect only parts of it.
