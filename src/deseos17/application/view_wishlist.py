@@ -28,12 +28,10 @@ class ViewWishList(Interactor[ViewWishListDTO, WishList]):
             self,
             wish_db_gateway: WishDbGateway,
             access_service: AccessService,
-            wish_service: WishService,
             id_provider: IdProvider,
     ):
         self.wish_db_gateway = wish_db_gateway
         self.access_service = access_service
-        self.wish_service = wish_service
         self.id_provider = id_provider
 
     def __call__(self, data: ViewWishListDTO) -> WishList:
