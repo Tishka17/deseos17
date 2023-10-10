@@ -31,3 +31,8 @@ aiogram-dialog-preview deseos17.main.bot:get_dispatcher_preview
 ```sh
 uvicorn deseos17.main.web:app
 ```
+5. Run bot
+
+```sh
+python -m deseos17.main.bot
+```

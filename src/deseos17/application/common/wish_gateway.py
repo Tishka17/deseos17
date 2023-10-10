@@ -42,6 +42,24 @@ class WishListsReader(Protocol):
         raise NotImplementedError
 
 
+class WishesReader(Protocol):
+    @abstractmethod
+    def find_wishes_for_list(
+            self,
+            wishlist_id: WishListId,
+            limit: int,
+            offset: int,
+    ) -> List[Wish]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def total_wishlists_for_list(
+            self,
+            wishlist_id: WishListId,
+    ) -> int:
+        raise NotImplementedError
+
+
 class WishListSaver(Protocol):
     @abstractmethod
     def save_wishlist(self, wish: WishList) -> None:

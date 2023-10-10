@@ -46,6 +46,7 @@ class IoC(InteractorFactory):
             id_provider=id_provider,
         )
 
+    @contextmanager
     def create_wishlist(
             self, id_provider: IdProvider,
     ) -> ContextManager[CreateWishList]:
@@ -56,6 +57,7 @@ class IoC(InteractorFactory):
             wishlist_service=WishListService(),
         )
 
+    @contextmanager
     def get_own_wishlists(
             self, id_provider: IdProvider,
     ) -> ContextManager[GetOwnWishLists]:
@@ -64,6 +66,7 @@ class IoC(InteractorFactory):
             wish_db_gateway=self.wish_gateway,
         )
 
+    @contextmanager
     def update_wish(
             self, id_provider: IdProvider,
     ) -> ContextManager[UpdateWish]:
