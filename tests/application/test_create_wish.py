@@ -5,7 +5,7 @@ import pytest
 
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.common.uow import UoW
-from deseos17.application.create_wish import NewWishDTO, DbGateway, CreateWish
+from deseos17.application.create_wish import NewWishDTO, WishDbGateway, CreateWish
 from deseos17.domain.exceptions import AccessDenied
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList, Wish, WishId, WishListId
@@ -28,7 +28,7 @@ def uow() -> UoW:
 
 
 @pytest.fixture()
-def wish_gateway() -> DbGateway:
+def wish_gateway() -> WishDbGateway:
     gateway = Mock()
     gateway.save_wish = Mock()
     gateway.get_wishlist = Mock(return_value=WishList(
@@ -77,7 +77,7 @@ def test_create_wish_access(
     access_service.ensure_can_create = Mock(return_value=True)
 
     usecase = CreateWish(
-        db_gateway=wish_gateway,
+        wish_db_gateway=wish_gateway,
         access_service=access_service,
         wish_service=wish_service,
         id_provider=owner_id_provider,
@@ -98,7 +98,7 @@ def test_create_wish_no_access(
     access_service.ensure_can_create = Mock(side_effect=AccessDenied)
 
     usecase = CreateWish(
-        db_gateway=wish_gateway,
+        wish_db_gateway=wish_gateway,
         access_service=access_service,
         wish_service=wish_service,
         id_provider=owner_id_provider,

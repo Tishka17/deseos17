@@ -2,10 +2,10 @@ from datetime import datetime
 from typing import List
 
 from deseos17.application.create_wish import (
-    DbGateway as CreateWishDbGateway,
+    WishDbGateway as CreateWishDbGateway,
 )
 from deseos17.application.view_wishlist import (
-    DbGateway as ViewWishListDbGateway,
+    WishDbGateway as ViewWishListDbGateway,
 )
 from deseos17.domain.models.sharing import ShareRule
 from deseos17.domain.models.user_id import UserId
@@ -13,9 +13,6 @@ from deseos17.domain.models.wish import WishListId, WishList, Wish
 
 
 class FakeWishGateway(ViewWishListDbGateway, CreateWishDbGateway):
-    def commit(self):
-        pass
-
     def get_wishlist(self, wishlist_id: WishListId) -> WishList:
         return WishList(
             id=wishlist_id,

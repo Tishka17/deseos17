@@ -34,7 +34,7 @@ class IoC(InteractorFactory):
             self, id_provider: IdProvider,
     ) -> ViewWishList:
         yield ViewWishList(
-            db_gateway=self.wish_gateway,
+            wish_db_gateway=self.wish_gateway,
             access_service=AccessService(),
             wish_service=WishService(),
             id_provider=id_provider,
@@ -45,7 +45,7 @@ class IoC(InteractorFactory):
             self, id_provider: IdProvider,
     ) -> CreateWish:
         yield CreateWish(
-            db_gateway=self.wish_gateway,
+            wish_db_gateway=self.wish_gateway,
             uow=self.uow,
             access_service=AccessService(),
             wish_service=WishService(),
