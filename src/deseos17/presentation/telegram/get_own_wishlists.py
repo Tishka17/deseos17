@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.common import ManagedScroll
 from aiogram_dialog.widgets.kbd import (
-    StubScroll, NumberedPager, Group, Select, Column,
+    StubScroll, NumberedPager, Group, Select, Column, Start,
 )
 from aiogram_dialog.widgets.text import Const, Format
 
@@ -16,7 +16,9 @@ from deseos17.application.get_own_wishlists import GetOwnWishListsDTO
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList, WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from .states import GetOwnWishlists, start_view_wishlist
+from .states import (
+    GetOwnWishlists, start_view_wishlist, CreateWishList, ViewWishList,
+)
 
 PAGE_SIZE = 10
 
@@ -59,6 +61,11 @@ own_wishlists_dialog = Dialog(
                when=F["total"]),
         Const("You have no wishlists.", when=~F["total"]),
         StubScroll(id="scroll", pages=F["pages"]),
+        Start(
+            Const("➕ New wishlist"),
+            state=CreateWishList.text,
+            id="new",
+        ),
         Column(
             Select(
                 Format("{item.title}"),
@@ -86,6 +93,9 @@ own_wishlists_dialog = Dialog(
                          updated_at=datetime.min),
             ],
         },
+        preview_add_transitions=[
+            Start(Const("0"), state=ViewWishList.view, id="0")
+        ],
         state=GetOwnWishlists.view,
     )
 )

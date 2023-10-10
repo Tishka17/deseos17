@@ -4,6 +4,9 @@ from aiogram import Bot, Dispatcher
 from aiogram_dialog import setup_dialogs
 
 from deseos17.presentation.telegram.create_wish import create_wish_dialog
+from deseos17.presentation.telegram.create_wishlist import (
+    create_wishlist_dialog,
+)
 from deseos17.presentation.telegram.get_own_wishlists import (
     own_wishlists_dialog,
 )
@@ -22,6 +25,7 @@ def get_dispatcher(config: BotConfig) -> Dispatcher:
     dp.update.middleware(IdProviderMiddleware())
     dp.include_router(start_router)
     dp.include_router(create_wish_dialog)
+    dp.include_router(create_wishlist_dialog)
     dp.include_router(own_wishlists_dialog)
     dp.include_router(wishlist_dialog)
     setup_dialogs(dp)

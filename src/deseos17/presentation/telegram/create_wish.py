@@ -5,6 +5,8 @@ from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 from aiogram_dialog.widgets.kbd import Button, Row, Back, Cancel, Next
 from aiogram_dialog.widgets.text import Format, Const
+
+from deseos17.application.common.dto import Pagination
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import NewWishDTO
 from deseos17.application.view_wishlist import ViewWishListDTO
@@ -25,11 +27,14 @@ def wishlist_getter(
         id_provider: IdProvider,
         **kwargs,
 ) -> Dict[str, Any]:
+    wishlist_id = get_wishlist_id(dialog_manager)
     with ioc.view_wishlist(id_provider) as view_wishlist:
-        wishlist_id = get_wishlist_id(dialog_manager)
-        wishlist = view_wishlist(ViewWishListDTO(wishlist_id))
+        data = view_wishlist(ViewWishListDTO(
+            id=wishlist_id,
+            pagination=Pagination(limit=0, offset=0),
+        ))
         return {
-            "wishlist": wishlist,
+            "wishlist": data.wishlist,
         }
 
 
