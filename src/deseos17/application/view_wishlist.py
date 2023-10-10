@@ -3,7 +3,7 @@ from typing import Protocol
 
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.common.interactor import Interactor
-from deseos17.application.common.interfaces import (
+from deseos17.application.common.wish_gateway import (
     WishListReader, ShareReader,
 )
 from deseos17.domain.models.wish import WishList, WishListId

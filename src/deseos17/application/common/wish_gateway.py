@@ -6,12 +6,6 @@ from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId, WishId, Wish, WishList
 
 
-class Comitter(Protocol):
-    @abstractmethod
-    def commit(self):
-        raise NotImplementedError
-
-
 class WishReader(Protocol):
     @abstractmethod
     def get_wish(self, wish_id: WishId) -> Wish:

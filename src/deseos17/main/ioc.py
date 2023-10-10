@@ -1,6 +1,8 @@
 from contextlib import contextmanager
 
-from deseos17.adapters.database.fake_db import FakeGateway
+from deseos17.adapters.database.fake_uow import FakeUoW
+from deseos17.adapters.database.fake_user_db import FakeUserGateway
+from deseos17.adapters.database.fake_wish_db import FakeWishGateway
 from deseos17.application.authenticate import Authenticate
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import CreateWish
@@ -12,7 +14,9 @@ from deseos17.presentation.interactor_factory import InteractorFactory
 
 class IoC(InteractorFactory):
     def __init__(self, tg_token: str):
-        self.db_gateway = FakeGateway()
+        self.wish_gateway = FakeWishGateway()
+        self.user_gateway = FakeUserGateway()
+        self.uow = FakeUoW()
         self.tg_token = tg_token
 
     @contextmanager
@@ -21,6 +25,8 @@ class IoC(InteractorFactory):
     ) -> Authenticate:
         yield Authenticate(
             id_provider=id_provider,
+            user_saver=self.user_gateway,
+            uow=self.uow,
         )
 
     @contextmanager
@@ -28,7 +34,7 @@ class IoC(InteractorFactory):
             self, id_provider: IdProvider,
     ) -> ViewWishList:
         yield ViewWishList(
-            db_gateway=self.db_gateway,
+            db_gateway=self.wish_gateway,
             access_service=AccessService(),
             wish_service=WishService(),
             id_provider=id_provider,
@@ -39,7 +45,8 @@ class IoC(InteractorFactory):
             self, id_provider: IdProvider,
     ) -> CreateWish:
         yield CreateWish(
-            db_gateway=self.db_gateway,
+            db_gateway=self.wish_gateway,
+            uow=self.uow,
             access_service=AccessService(),
             wish_service=WishService(),
             id_provider=id_provider,

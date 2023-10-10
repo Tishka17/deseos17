@@ -12,7 +12,7 @@ from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishListId, WishList, Wish
 
 
-class FakeGateway(ViewWishListDbGateway, CreateWishDbGateway):
+class FakeWishGateway(ViewWishListDbGateway, CreateWishDbGateway):
     def commit(self):
         pass
 

@@ -3,8 +3,9 @@ from typing import Protocol
 
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.common.interactor import Interactor
-from deseos17.application.common.interfaces import (
-    Comitter, WishReader, WishListReader, WishSaver, WishListSaver,
+from deseos17.application.common.uow import UoW
+from deseos17.application.common.wish_gateway import (
+    WishReader, WishListReader, WishSaver, WishListSaver,
     ShareReader,
 )
 from deseos17.domain.models.wish import Wish, WishList, WishId
@@ -19,7 +20,7 @@ class UpdateWishDTO:
 
 
 class DbGateway(
-    Protocol, Comitter, WishReader, WishListReader, WishSaver, WishListSaver,
+    Protocol, WishReader, WishListReader, WishSaver, WishListSaver,
     ShareReader,
 ):
     pass
@@ -32,11 +33,13 @@ class UpdateWish(Interactor[UpdateWishDTO, None]):
             access_service: AccessService,
             wish_service: WishService,
             id_provider: IdProvider,
+            uow: UoW,
     ):
         self.db_gateway = db_gateway
         self.access_service = access_service
         self.wish_service = wish_service
         self.id_provider = id_provider
+        self.uow = uow
 
     def __call__(self, data: UpdateWishDTO) -> None:
         user_id = self.id_provider.get_current_user_id()
@@ -50,4 +53,4 @@ class UpdateWish(Interactor[UpdateWishDTO, None]):
 
         self.db_gateway.save_wish(wish)
         self.db_gateway.save_wishlist(wishlist)
-        self.db_gateway.commit()
+        self.uow.commit()
