@@ -20,10 +20,11 @@ classifiers = [
 ]
 dependencies = [
     "aiogram-dialog>=2.0.0",
-    "fastapi==0.95.*",
+    "aiogram==3.*",
+    "fastapi==0.103.*",
     "uvicorn==0.22.*",
     "python-jose[cryptography]==3.3.*",
-    "typing-extensions==4.8.*",
+    "typing-extensions~=4.7",
 ]
 [project.optional-dependencies]
 test = [

@@ -2,11 +2,9 @@ from typing import Any, Dict
 
 from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager
-from aiogram_dialog.widgets.input import TextInput
-from aiogram_dialog.widgets.input.text import ManagedTextInputAdapter
+from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 from aiogram_dialog.widgets.kbd import Button, Row, Back, Cancel, Next
 from aiogram_dialog.widgets.text import Format, Const
-
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import NewWishDTO
 from deseos17.application.view_wishlist import ViewWishListDTO
@@ -38,7 +36,7 @@ def wishlist_getter(
 def preview_getter(
         dialog_manager: DialogManager, **kwargs,
 ) -> Dict[str, Any]:
-    text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
+    text: ManagedTextInput = dialog_manager.find(TEXT_INPUT_ID)
     return {
         "text": text.get_value(),
     }
@@ -47,7 +45,7 @@ def preview_getter(
 async def on_done(
         event: CallbackQuery, button, dialog_manager: DialogManager,
 ) -> None:
-    text: ManagedTextInputAdapter = dialog_manager.find(TEXT_INPUT_ID)
+    text: ManagedTextInput = dialog_manager.find(TEXT_INPUT_ID)
     ioc: InteractorFactory = dialog_manager.middleware_data["ioc"]
     id_provider: IdProvider = dialog_manager.middleware_data["id_provider"]
     with ioc.create_wish(id_provider) as create_wish:
