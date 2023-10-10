@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from deseos17.application.common.id_provider import IdProvider
+from deseos17.application.common.uow import UoW
 from deseos17.application.create_wish import NewWishDTO, DbGateway, CreateWish
 from deseos17.domain.exceptions import AccessDenied
 from deseos17.domain.models.user_id import UserId
@@ -18,9 +19,17 @@ OTHER_USER_ID = UserId(1)
 
 
 @pytest.fixture()
-def db_gateway() -> DbGateway:
+def uow() -> UoW:
+    uow_mock = Mock()
+    uow_mock.commit = Mock()
+    uow_mock.rollback = Mock()
+    uow_mock.flush = Mock()
+    return uow_mock
+
+
+@pytest.fixture()
+def wish_gateway() -> DbGateway:
     gateway = Mock()
-    gateway.commit = Mock()
     gateway.save_wish = Mock()
     gateway.get_wishlist = Mock(return_value=WishList(
         id=NEW_WISH_LIST_ID,
@@ -60,16 +69,19 @@ def other_id_provider() -> IdProvider:
     return mock_id_provider
 
 
-def test_create_wish_access(db_gateway, wish_service, owner_id_provider):
+def test_create_wish_access(
+        wish_gateway, wish_service, owner_id_provider, uow,
+):
     access_service: AccessService = Mock()
     access_service.ensure_can_edit = Mock(return_value=True)
     access_service.ensure_can_create = Mock(return_value=True)
 
     usecase = CreateWish(
-        db_gateway=db_gateway,
+        db_gateway=wish_gateway,
         access_service=access_service,
         wish_service=wish_service,
         id_provider=owner_id_provider,
+        uow=uow,
     )
     res = usecase(NewWishDTO(
         wishlist_id=NEW_WISH_LIST_ID,
@@ -78,16 +90,19 @@ def test_create_wish_access(db_gateway, wish_service, owner_id_provider):
     assert res == NEW_WISH_ID
 
 
-def test_create_wish_no_access(db_gateway, wish_service, owner_id_provider):
+def test_create_wish_no_access(
+        wish_gateway, wish_service, owner_id_provider, uow,
+):
     access_service: AccessService = Mock()
     access_service.ensure_can_edit = Mock(side_effect=AccessDenied)
     access_service.ensure_can_create = Mock(side_effect=AccessDenied)
 
     usecase = CreateWish(
-        db_gateway=db_gateway,
+        db_gateway=wish_gateway,
         access_service=access_service,
         wish_service=wish_service,
         id_provider=owner_id_provider,
+        uow=uow,
     )
     with pytest.raises(AccessDenied):
         usecase(NewWishDTO(
