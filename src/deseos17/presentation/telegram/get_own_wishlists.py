@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import Any
 
 from aiogram import F
+from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.common import ManagedScroll
 from aiogram_dialog.widgets.kbd import (
-    StubScroll, NumberedPager, Group, Select, Column,
+    StubScroll, NumberedPager, Group, Select, Column, Start,
 )
 from aiogram_dialog.widgets.text import Const, Format
 
@@ -14,18 +16,18 @@ from deseos17.application.get_own_wishlists import GetOwnWishListsDTO
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList, WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from .states import GetOwnWishlists
+from . import states
 
 PAGE_SIZE = 10
 
 
 async def own_wishlists_getter(
-        dialog_manger: DialogManager,
+        dialog_manager: DialogManager,
         ioc: InteractorFactory,
         id_provider: IdProvider,
         **kwargs,
 ):
-    scroll: ManagedScroll = dialog_manger.find("scroll")
+    scroll: ManagedScroll = dialog_manager.find("scroll")
     page = await scroll.get_page()
     offset = page * PAGE_SIZE
 
@@ -44,18 +46,31 @@ async def own_wishlists_getter(
     }
 
 
+async def on_selected(
+        event: CallbackQuery, select: Any, dialog_manager: DialogManager,
+        wishlist_id: WishListId,
+) -> None:
+    await states.start_view_wishlist(dialog_manager, wishlist_id)
+
+
 own_wishlists_dialog = Dialog(
     Window(
         Format("You have {total} wishlists. Select one to view",
-              when=F["total"]),
+               when=F["total"]),
         Const("You have no wishlists.", when=~F["total"]),
         StubScroll(id="scroll", pages=F["pages"]),
+        Start(
+            Const("➕ New wishlist"),
+            state=states.CreateWishList.text,
+            id="new",
+        ),
         Column(
             Select(
                 Format("{item.title}"),
                 item_id_getter=lambda item: item.id,
-                type_factory=int,
+                type_factory=lambda x: WishListId(int(x)),
                 items="wishlists",
+                on_click=on_selected,
                 id="list",
             ),
         ),
@@ -76,6 +91,9 @@ own_wishlists_dialog = Dialog(
                          updated_at=datetime.min),
             ],
         },
-        state=GetOwnWishlists.view,
+        preview_add_transitions=[
+            Start(Const("0"), state=states.ViewWishList.view, id="0")
+        ],
+        state=states.GetOwnWishlists.view,
     )
 )

@@ -5,12 +5,14 @@ from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 from aiogram_dialog.widgets.kbd import Button, Row, Back, Cancel, Next
 from aiogram_dialog.widgets.text import Format, Const
+
+from deseos17.application.common.dto import Pagination
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.create_wish import NewWishDTO
 from deseos17.application.view_wishlist import ViewWishListDTO
 from deseos17.domain.models.wish import WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from deseos17.presentation.telegram import states
+from . import states
 
 TEXT_INPUT_ID = "text"
 
@@ -19,21 +21,24 @@ def get_wishlist_id(dialog_manager) -> WishListId:
     return dialog_manager.start_data["wishlist_id"]
 
 
-def wishlist_getter(
+async def wishlist_getter(
         dialog_manager: DialogManager,
         ioc: InteractorFactory,
         id_provider: IdProvider,
         **kwargs,
 ) -> Dict[str, Any]:
+    wishlist_id = get_wishlist_id(dialog_manager)
     with ioc.view_wishlist(id_provider) as view_wishlist:
-        wishlist_id = get_wishlist_id(dialog_manager)
-        wishlist = view_wishlist(ViewWishListDTO(wishlist_id))
+        data = view_wishlist(ViewWishListDTO(
+            id=wishlist_id,
+            pagination=Pagination(limit=0, offset=0),
+        ))
         return {
-            "wishlist": wishlist,
+            "wishlist": data.wishlist,
         }
 
 
-def preview_getter(
+async def preview_getter(
         dialog_manager: DialogManager, **kwargs,
 ) -> Dict[str, Any]:
     text: ManagedTextInput = dialog_manager.find(TEXT_INPUT_ID)
@@ -58,23 +63,27 @@ async def on_done(
 create_wish_dialog = Dialog(
     Window(
         Format(
-            "You are going to add wish into list `{wishlist.name}`.\n"
+            "You are going to add wish into list `{wishlist.title}`.\n"
             "Please, provide text:"
         ),
+        Cancel(),
         TextInput(id=TEXT_INPUT_ID, on_success=Next()),
+        preview_add_transitions=[
+            Next(),
+        ],
         getter=wishlist_getter,
         state=states.CreateWish.text,
     ),
     Window(
         Format(
-            "You are going to add wish into list `{wishlist.name}`.\n"
+            "You are going to add wish into list `{wishlist.title}`.\n"
             "Your text is: \n{text}\n\n"
             "Please, confirm."
         ),
         Row(
             Button(text=Const("Ok"), id="ok", on_click=on_done),
             Back(),
-            Cancel()
+            Cancel(),
         ),
         getter=[wishlist_getter, preview_getter],
         state=states.CreateWish.preview,
