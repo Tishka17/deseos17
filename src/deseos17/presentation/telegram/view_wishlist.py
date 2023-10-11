@@ -5,7 +5,8 @@ from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.common import ManagedScroll
 from aiogram_dialog.widgets.kbd import (
-    StubScroll, NumberedPager, Group, Select, Column, Button, Start,
+    StubScroll, NumberedPager, Group, Select, Column, Button, Start, Back,
+    Cancel,
 )
 from aiogram_dialog.widgets.text import Const, Format
 
@@ -84,6 +85,7 @@ wishlist_dialog = Dialog(
             NumberedPager(id="pager", scroll="scroll"),
             width=8,
         ),
+        Cancel(Const("⬅️ Back")),
         getter=own_wishlists_getter,
         preview_data={
             "total_wishes": 40,

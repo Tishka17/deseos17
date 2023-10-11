@@ -14,7 +14,7 @@ from . import states
 TEXT_INPUT_ID = "text"
 
 
-def preview_getter(
+async def preview_getter(
         dialog_manager: DialogManager, **kwargs,
 ) -> Dict[str, Any]:
     text: ManagedTextInput = dialog_manager.find(TEXT_INPUT_ID)
@@ -48,6 +48,7 @@ create_wishlist_dialog = Dialog(
             "You are going to create a new wishlist.\n\n"
             "Please, provide title:"
         ),
+        Cancel(),
         TextInput(id=TEXT_INPUT_ID, on_success=Next()),
         preview_add_transitions=[
             Next(),

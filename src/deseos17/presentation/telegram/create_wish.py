@@ -21,7 +21,7 @@ def get_wishlist_id(dialog_manager) -> WishListId:
     return dialog_manager.start_data["wishlist_id"]
 
 
-def wishlist_getter(
+async def wishlist_getter(
         dialog_manager: DialogManager,
         ioc: InteractorFactory,
         id_provider: IdProvider,
@@ -38,7 +38,7 @@ def wishlist_getter(
         }
 
 
-def preview_getter(
+async def preview_getter(
         dialog_manager: DialogManager, **kwargs,
 ) -> Dict[str, Any]:
     text: ManagedTextInput = dialog_manager.find(TEXT_INPUT_ID)
@@ -63,9 +63,10 @@ async def on_done(
 create_wish_dialog = Dialog(
     Window(
         Format(
-            "You are going to add wish into list `{wishlist.name}`.\n"
+            "You are going to add wish into list `{wishlist.title}`.\n"
             "Please, provide text:"
         ),
+        Cancel(),
         TextInput(id=TEXT_INPUT_ID, on_success=Next()),
         preview_add_transitions=[
             Next(),
@@ -75,14 +76,14 @@ create_wish_dialog = Dialog(
     ),
     Window(
         Format(
-            "You are going to add wish into list `{wishlist.name}`.\n"
+            "You are going to add wish into list `{wishlist.title}`.\n"
             "Your text is: \n{text}\n\n"
             "Please, confirm."
         ),
         Row(
             Button(text=Const("Ok"), id="ok", on_click=on_done),
             Back(),
-            Cancel()
+            Cancel(),
         ),
         getter=[wishlist_getter, preview_getter],
         state=states.CreateWish.preview,
