@@ -1,10 +1,11 @@
 from datetime import datetime
 
 from aiogram import F
+from aiogram.types import CallbackQuery
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.common import ManagedScroll
 from aiogram_dialog.widgets.kbd import (
-    StubScroll, NumberedPager, Group, Select, Column,
+    StubScroll, NumberedPager, Group, Select, Column, Button, Start,
 )
 from aiogram_dialog.widgets.text import Const, Format
 
@@ -14,7 +15,7 @@ from deseos17.application.view_wishlist import ViewWishListDTO
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList, WishListId, Wish, WishId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from deseos17.presentation.telegram.states import ViewWishList
+from . import states
 
 PAGE_SIZE = 10
 
@@ -42,10 +43,20 @@ async def own_wishlists_getter(
 
     return {
         "total_wishes": data.total_wishes,
-        "pages": data.total_wishes // PAGE_SIZE + bool(data.total_wishes % PAGE_SIZE),
+        "pages": data.total_wishes // PAGE_SIZE + bool(
+            data.total_wishes % PAGE_SIZE),
         "wishes": data.wishes,
         "wishlist": data.wishlist,
     }
+
+
+async def add_new_wish(
+        event: CallbackQuery, button: Button, dialog_manager: DialogManager,
+) -> None:
+    await states.start_create_wish(
+        dialog_manager=dialog_manager,
+        wishlist_id=dialog_manager.start_data["wishlist_id"],
+    )
 
 
 wishlist_dialog = Dialog(
@@ -55,6 +66,11 @@ wishlist_dialog = Dialog(
         Const("No wishes", when=~F["total_wishes"]),
         Format("Updated: {wishlist.updated_at}"),
         StubScroll(id="scroll", pages=F["pages"]),
+        Button(
+            Const("➕ New wish"),
+            on_click=add_new_wish,
+            id="new",
+        ),
         Column(
             Select(
                 Format("{item.text}"),
@@ -70,8 +86,8 @@ wishlist_dialog = Dialog(
         ),
         getter=own_wishlists_getter,
         preview_data={
-            "total_wishes": 4,
-            "pages": 2,
+            "total_wishes": 40,
+            "pages": 5,
             "wishlist": WishList(WishListId(1), UserId(1), title="Listo Uno",
                                  updated_at=datetime.min),
             "wishes": [
@@ -83,16 +99,11 @@ wishlist_dialog = Dialog(
                     wishlist_id=WishListId(1), text="Wish 2",
                     updated_at=datetime.min, id=WishId(2),
                 ),
-                Wish(
-                    wishlist_id=WishListId(1), text="Wish 3",
-                    updated_at=datetime.min, id=WishId(3),
-                ),
-                Wish(
-                    wishlist_id=WishListId(1), text="Wish 4",
-                    updated_at=datetime.min, id=WishId(4),
-                ),
             ],
         },
-        state=ViewWishList.view,
+        preview_add_transitions=[
+            Start(Const("0"), state=states.CreateWish.text, id="0")
+        ],
+        state=states.ViewWishList.view,
     )
 )

@@ -6,7 +6,7 @@ from aiogram_dialog import DialogManager, StartMode
 from deseos17.application.authenticate import LoginResultDTO
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.presentation.interactor_factory import InteractorFactory
-from .states import GetOwnWishlists
+from . import states
 
 start_router = Router()
 
@@ -28,6 +28,6 @@ async def start(
             photo_url=None,
         ))
     await dialog_manager.start(
-        GetOwnWishlists.view,
+        states.GetOwnWishlists.view,
         mode=StartMode.RESET_STACK,
     )

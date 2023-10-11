@@ -12,7 +12,7 @@ from deseos17.application.create_wish import NewWishDTO
 from deseos17.application.view_wishlist import ViewWishListDTO
 from deseos17.domain.models.wish import WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from deseos17.presentation.telegram import states
+from . import states
 
 TEXT_INPUT_ID = "text"
 
@@ -67,6 +67,9 @@ create_wish_dialog = Dialog(
             "Please, provide text:"
         ),
         TextInput(id=TEXT_INPUT_ID, on_success=Next()),
+        preview_add_transitions=[
+            Next(),
+        ],
         getter=wishlist_getter,
         state=states.CreateWish.text,
     ),

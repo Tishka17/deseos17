@@ -16,9 +16,7 @@ from deseos17.application.get_own_wishlists import GetOwnWishListsDTO
 from deseos17.domain.models.user_id import UserId
 from deseos17.domain.models.wish import WishList, WishListId
 from deseos17.presentation.interactor_factory import InteractorFactory
-from .states import (
-    GetOwnWishlists, start_view_wishlist, CreateWishList, ViewWishList,
-)
+from . import states
 
 PAGE_SIZE = 10
 
@@ -52,7 +50,7 @@ async def on_selected(
         event: CallbackQuery, select: Any, dialog_manager: DialogManager,
         wishlist_id: WishListId,
 ) -> None:
-    await start_view_wishlist(dialog_manager, wishlist_id)
+    await states.start_view_wishlist(dialog_manager, wishlist_id)
 
 
 own_wishlists_dialog = Dialog(
@@ -63,7 +61,7 @@ own_wishlists_dialog = Dialog(
         StubScroll(id="scroll", pages=F["pages"]),
         Start(
             Const("➕ New wishlist"),
-            state=CreateWishList.text,
+            state=states.CreateWishList.text,
             id="new",
         ),
         Column(
@@ -94,8 +92,8 @@ own_wishlists_dialog = Dialog(
             ],
         },
         preview_add_transitions=[
-            Start(Const("0"), state=ViewWishList.view, id="0")
+            Start(Const("0"), state=states.ViewWishList.view, id="0")
         ],
-        state=GetOwnWishlists.view,
+        state=states.GetOwnWishlists.view,
     )
 )
