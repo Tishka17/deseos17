@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from typing_extensions import Annotated
 
 from deseos17.application.common.dto import Pagination
@@ -12,11 +11,6 @@ from deseos17.presentation.interactor_factory import InteractorFactory
 from deseos17.presentation.web_api.dependencies.depends_stub import Stub
 
 wishlist_router = APIRouter(prefix="/wishlists")
-
-
-class NewWishSchema(BaseModel):
-    wishlist_id: WishListId
-    text: str
 
 
 @wishlist_router.get("/")
