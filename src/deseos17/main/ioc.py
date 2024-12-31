@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from typing import ContextManager
 
-from deseos17.adapters.database.fake_uow import FakeUoW
+from deseos17.adapters.database.fake_transaction_manager import FakeTransactionManager
 from deseos17.adapters.database.fake_user_db import FakeUserGateway
 from deseos17.adapters.database.fake_wish_db import FakeWishGateway
 from deseos17.application.authenticate import Authenticate
@@ -21,7 +21,7 @@ class IoC(InteractorFactory):
     def __init__(self, tg_token: str):
         self.wish_gateway = FakeWishGateway()
         self.user_gateway = FakeUserGateway()
-        self.uow = FakeUoW()
+        self.transaction_manager = FakeTransactionManager()
         self.tg_token = tg_token
 
     @contextmanager
@@ -31,7 +31,7 @@ class IoC(InteractorFactory):
         yield Authenticate(
             id_provider=id_provider,
             user_saver=self.user_gateway,
-            uow=self.uow,
+            transaction_manager=self.transaction_manager,
         )
 
     @contextmanager
@@ -40,7 +40,7 @@ class IoC(InteractorFactory):
     ) -> CreateWish:
         yield CreateWish(
             wish_db_gateway=self.wish_gateway,
-            uow=self.uow,
+            transaction_manager=self.transaction_manager,
             access_service=AccessService(),
             wish_service=WishService(),
             id_provider=id_provider,
@@ -52,7 +52,7 @@ class IoC(InteractorFactory):
     ) -> ContextManager[CreateWishList]:
         yield CreateWishList(
             wish_db_gateway=self.wish_gateway,
-            uow=self.uow,
+            transaction_manager=self.transaction_manager,
             id_provider=id_provider,
             wishlist_service=WishListService(),
         )
@@ -72,7 +72,7 @@ class IoC(InteractorFactory):
     ) -> ContextManager[UpdateWish]:
         yield UpdateWish(
             wish_db_gateway=self.wish_gateway,
-            uow=self.uow,
+            transaction_manager=self.transaction_manager,
             id_provider=id_provider,
             access_service=AccessService(),
             wish_service=WishService(),

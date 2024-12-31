@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Protocol
 
 
-class UoW(Protocol):
+class TransactionManager(Protocol):
     @abstractmethod
     def commit(self) -> None:
         raise NotImplementedError

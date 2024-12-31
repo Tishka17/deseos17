@@ -3,7 +3,7 @@ from typing import Protocol
 
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.common.interactor import Interactor
-from deseos17.application.common.uow import UoW
+from deseos17.application.common.transaction import TransactionManager
 from deseos17.application.common.wish_gateway import (
     WishReader, WishListReader, WishSaver, WishListSaver,
     ShareReader,
@@ -33,13 +33,13 @@ class UpdateWish(Interactor[UpdateWishDTO, None]):
             access_service: AccessService,
             wish_service: WishService,
             id_provider: IdProvider,
-            uow: UoW,
+            transaction_manager: TransactionManager,
     ):
         self.wish_db_gateway = wish_db_gateway
         self.access_service = access_service
         self.wish_service = wish_service
         self.id_provider = id_provider
-        self.uow = uow
+        self.transaction_manager = transaction_manager
 
     def __call__(self, data: UpdateWishDTO) -> None:
         user_id = self.id_provider.get_current_user_id()
@@ -55,4 +55,4 @@ class UpdateWish(Interactor[UpdateWishDTO, None]):
 
         self.wish_db_gateway.save_wish(wish)
         self.wish_db_gateway.save_wishlist(wishlist)
-        self.uow.commit()
+        self.transaction_manager.commit()

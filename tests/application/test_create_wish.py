@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from deseos17.application.common.id_provider import IdProvider
-from deseos17.application.common.uow import UoW
+from deseos17.application.common.transaction import TransactionManager
 from deseos17.application.create_wish import NewWishDTO, WishDbGateway, CreateWish
 from deseos17.domain.exceptions import AccessDenied
 from deseos17.domain.models.user_id import UserId
@@ -19,12 +19,12 @@ OTHER_USER_ID = UserId(1)
 
 
 @pytest.fixture()
-def uow() -> UoW:
-    uow_mock = Mock()
-    uow_mock.commit = Mock()
-    uow_mock.rollback = Mock()
-    uow_mock.flush = Mock()
-    return uow_mock
+def transaction_manager() -> TransactionManager:
+    transaction_manager_mock = Mock()
+    transaction_manager_mock.commit = Mock()
+    transaction_manager_mock.rollback = Mock()
+    transaction_manager_mock.flush = Mock()
+    return transaction_manager_mock
 
 
 @pytest.fixture()
@@ -70,7 +70,7 @@ def other_id_provider() -> IdProvider:
 
 
 def test_create_wish_access(
-        wish_gateway, wish_service, owner_id_provider, uow,
+        wish_gateway, wish_service, owner_id_provider, transaction_manager,
 ):
     access_service: AccessService = Mock()
     access_service.ensure_can_edit = Mock(return_value=True)
@@ -81,7 +81,7 @@ def test_create_wish_access(
         access_service=access_service,
         wish_service=wish_service,
         id_provider=owner_id_provider,
-        uow=uow,
+        transaction_manager=transaction_manager,
     )
     res = usecase(NewWishDTO(
         wishlist_id=NEW_WISH_LIST_ID,
@@ -91,7 +91,7 @@ def test_create_wish_access(
 
 
 def test_create_wish_no_access(
-        wish_gateway, wish_service, owner_id_provider, uow,
+        wish_gateway, wish_service, owner_id_provider, transaction_manager,
 ):
     access_service: AccessService = Mock()
     access_service.ensure_can_edit = Mock(side_effect=AccessDenied)
@@ -102,7 +102,7 @@ def test_create_wish_no_access(
         access_service=access_service,
         wish_service=wish_service,
         id_provider=owner_id_provider,
-        uow=uow,
+        transaction_manager=transaction_manager,
     )
     with pytest.raises(AccessDenied):
         usecase(NewWishDTO(

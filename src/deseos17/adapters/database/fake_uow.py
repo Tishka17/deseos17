@@ -1,7 +1,7 @@
-from deseos17.application.common.uow import UoW
+from deseos17.application.common.transaction import TransactionManager
 
 
-class FakeUoW(UoW):
+class FakeTransactionManager(TransactionManager):
     def flush(self) -> None:
         pass
 

@@ -3,7 +3,7 @@ from typing import Optional
 
 from deseos17.application.common.id_provider import IdProvider
 from deseos17.application.common.interactor import Interactor
-from deseos17.application.common.uow import UoW
+from deseos17.application.common.transaction import TransactionManager
 from deseos17.application.common.user_gateway import UserSaver
 from deseos17.domain.models.user import User
 from deseos17.domain.models.user_id import UserId
@@ -24,11 +24,11 @@ class Authenticate(Interactor[LoginResultDTO, UserId]):
             self,
             id_provider: IdProvider,
             user_saver: UserSaver,
-            uow: UoW,
+            transaction_manager: TransactionManager,
     ):
         self.id_provider = id_provider
         self.user_saver = user_saver
-        self.uow = uow
+        self.transaction_manager = transaction_manager
 
     def __call__(self, data: LoginResultDTO) -> UserId:
         user_id = self.id_provider.get_current_user_id()
@@ -36,5 +36,5 @@ class Authenticate(Interactor[LoginResultDTO, UserId]):
             id=user_id,
             username=data.username,
         ))
-        self.uow.commit()
+        self.transaction_manager.commit()
         return user_id
